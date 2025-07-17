@@ -7,9 +7,10 @@
 #include "bn_sprite_text_generator.h"
 #include "common_variable_8x16_sprite_font.h"
 
-// Add music headers
+// Add audio headers
 #include "bn_music.h"
 #include "bn_music_items.h"
+#include "bn_sound_items.h"
 
 // If you have background assets, include them here:
 // #include "bn_regular_bg_items_your_background.h"
@@ -282,6 +283,7 @@ namespace
         {
             if(bn::keypad::start_pressed() || bn::keypad::a_pressed())
             {
+                bn::sound_items::alert.play();
                 _current_state = page_state::MAIN_CAROUSEL;
                 _highlight_index = 0;
                 show_carousel_page();
@@ -293,6 +295,7 @@ namespace
             // Handle B button to go back to intro
             if(bn::keypad::b_pressed())
             {
+                bn::sound_items::alert.play();
                 _current_state = page_state::INTRO;
                 show_intro_page();
                 return;  // Exit early to avoid processing other inputs
@@ -301,6 +304,7 @@ namespace
             // Navigation between pages
             if(bn::keypad::left_pressed())
             {
+                bn::sound_items::alert.play();
                 int page_index = static_cast<int>(_current_carousel_page);
                 page_index = (page_index - 1 + 4) % 4;
                 _current_carousel_page = static_cast<carousel_page>(page_index);
@@ -309,6 +313,7 @@ namespace
             }
             else if(bn::keypad::right_pressed())
             {
+                bn::sound_items::alert.play();
                 int page_index = static_cast<int>(_current_carousel_page);
                 page_index = (page_index + 1) % 4;
                 _current_carousel_page = static_cast<carousel_page>(page_index);
@@ -321,17 +326,20 @@ namespace
             {
                 if(bn::keypad::up_pressed())
                 {
+                    bn::sound_items::alert.play();
                     _highlight_index = (_highlight_index - 1 + 3) % 3;
                     show_carousel_page();
                 }
                 else if(bn::keypad::down_pressed())
                 {
+                    bn::sound_items::alert.play();
                     _highlight_index = (_highlight_index + 1) % 3;
                     show_carousel_page();
                 }
                 
                 if(bn::keypad::a_pressed())
                 {
+                    bn::sound_items::alert.play();
                     _current_state = page_state::EXPERIENCE_DETAIL;
                     _detail_section = static_cast<experience_section>(_highlight_index);
                     show_experience_detail();
@@ -343,6 +351,7 @@ namespace
         {
             if(bn::keypad::b_pressed())
             {
+                bn::sound_items::alert.play();
                 _current_state = page_state::MAIN_CAROUSEL;
                 show_carousel_page();
             }
