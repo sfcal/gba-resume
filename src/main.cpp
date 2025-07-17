@@ -7,6 +7,10 @@
 #include "bn_sprite_text_generator.h"
 #include "common_variable_8x16_sprite_font.h"
 
+// Add music headers
+#include "bn_music.h"
+#include "bn_music_items.h"
+
 // If you have background assets, include them here:
 // #include "bn_regular_bg_items_your_background.h"
 
@@ -58,6 +62,10 @@ namespace
         {
             // Set up a nice background color scheme
             setup_background();
+            
+            // Start playing background music
+            bn::music_items::cyberrid.play(0.5, true);  // 0.5 volume, true for loop
+            
             show_intro_page();
         }
 
