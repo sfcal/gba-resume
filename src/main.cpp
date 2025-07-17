@@ -82,6 +82,8 @@ namespace
                 case page_state::EXPERIENCE_DETAIL:
                     update_detail();
                     break;
+                default:
+                    break;
             }
         }
 
@@ -144,6 +146,8 @@ namespace
                     break;
                 case carousel_page::EDUCATION:
                     show_education_page();
+                    break;
+                default:
                     break;
             }
         }
@@ -264,6 +268,9 @@ namespace
                     _text_generator.generate(-110, 10, "- GNS3 virtual nets", _text_sprites);
                     _text_generator.generate(-110, 25, "- Docker containers", _text_sprites);
                     _text_generator.generate(-110, 40, "- Research docs", _text_sprites);
+                    break;
+                    
+                default:
                     break;
             }
             
