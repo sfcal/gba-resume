@@ -8,17 +8,22 @@
 #include "bn_regular_bg_ptr.h"
 #include "bn_timer.h"
 #include "bn_sound.h"
+#include "bn_math.h"
 #include "common_variable_8x16_sprite_font.h"
 
-// Add audio headers
+// Audio headers
 #include "bn_music.h"
 #include "bn_music_items.h"
 #include "bn_sound_items.h"
 
-// Add main background header
+// Background headers
 #include "bn_regular_bg_items_main_background.h"
 
-// Include all intro frames
+// Sprite headers
+#include "bn_sprite_items_arrow_left.h"
+#include "bn_sprite_items_arrow_right.h"
+
+// Intro frame headers
 #include "bn_regular_bg_items_frame_0001.h"
 #include "bn_regular_bg_items_frame_0002.h"
 #include "bn_regular_bg_items_frame_0003.h"
@@ -99,13 +104,13 @@ namespace
 {
     // Video intro configuration
     constexpr int VIDEO_FPS = 15;
-    constexpr int VIDEO_FRAME_DELAY = 60 / VIDEO_FPS; // 4 frames at 60Hz = 15 FPS
-    constexpr int TOTAL_VIDEO_FRAMES = 75; // You have 75 frames
+    constexpr int VIDEO_FRAME_DELAY = 60 / VIDEO_FPS;  // 4 frames at 60Hz = 15 FPS
+    constexpr int TOTAL_VIDEO_FRAMES = 75;              // 75 frames total
 
     // Page states
     enum class page_state
     {
-        VIDEO_INTRO,  // New state
+        VIDEO_INTRO,
         INTRO,
         MAIN_CAROUSEL,
         EXPERIENCE_DETAIL
@@ -230,17 +235,23 @@ namespace
         
         // Main background variable
         bn::optional<bn::regular_bg_ptr> _main_background;
+        
+        // Arrow sprites for carousel navigation
+        bn::optional<bn::sprite_ptr> _left_arrow;
+        bn::optional<bn::sprite_ptr> _right_arrow;
+        int _pulse_counter;
 
     public:
         resume_game() :
             _text_generator(common::variable_8x16_sprite_font),
-            _current_state(page_state::VIDEO_INTRO),  // Start with video
+            _current_state(page_state::VIDEO_INTRO),
             _current_carousel_page(carousel_page::EXPERIENCE),
             _selected_experience(experience_section::HAIVISION),
             _highlight_index(0),
             _video_frame_index(0),
             _video_frame_counter(0),
-            _video_audio_started(false)
+            _video_audio_started(false),
+            _pulse_counter(0)
         {
             // Start with video intro
             show_video_frame(0);
@@ -252,20 +263,24 @@ namespace
 
         void update()
         {
-            switch(_current_state)
+            switch (_current_state)
             {
                 case page_state::VIDEO_INTRO:
                     update_video_intro();
                     break;
+                    
                 case page_state::INTRO:
                     update_intro();
                     break;
+                    
                 case page_state::MAIN_CAROUSEL:
                     update_carousel();
                     break;
+                    
                 case page_state::EXPERIENCE_DETAIL:
                     update_detail();
                     break;
+                    
                 default:
                     break;
             }
@@ -275,7 +290,8 @@ namespace
         void show_video_frame(int frame_index)
         {
             _video_bg.reset();
-            if(frame_index < video::frame_count)
+            
+            if (frame_index < video::frame_count)
             {
                 _video_bg = video::frames[frame_index]->create_bg(0, 0);
             }
@@ -284,7 +300,7 @@ namespace
         void update_video_intro()
         {
             // Allow skipping with any button
-            if(bn::keypad::any_pressed())
+            if (bn::keypad::any_pressed())
             {
                 end_video_intro();
                 return;
@@ -294,13 +310,13 @@ namespace
             _video_frame_counter++;
             
             // Check if it's time for next frame
-            if(_video_frame_counter >= VIDEO_FRAME_DELAY)
+            if (_video_frame_counter >= VIDEO_FRAME_DELAY)
             {
                 _video_frame_counter = 0;
                 _video_frame_index++;
                 
                 // Check if video is complete
-                if(_video_frame_index >= TOTAL_VIDEO_FRAMES)
+                if (_video_frame_index >= TOTAL_VIDEO_FRAMES)
                 {
                     end_video_intro();
                 }
@@ -317,7 +333,7 @@ namespace
             _video_bg.reset();
             
             // Stop intro audio if it's still playing
-            if(_video_audio_started)
+            if (_video_audio_started)
             {
                 bn::sound::stop_all();
                 _video_audio_started = false;
@@ -341,7 +357,7 @@ namespace
             // Set priority so it appears behind sprites
             _main_background->set_priority(3);
             
-            // Optional: Set a fallback color
+            // Set a fallback color
             bn::bg_palettes::set_transparent_color(bn::color(2, 4, 8));  // Dark blue
         }
 
@@ -353,6 +369,54 @@ namespace
         void clear_text()
         {
             _text_sprites.clear();
+        }
+        
+        void create_navigation_arrows()
+        {
+            // Create left arrow
+            _left_arrow = bn::sprite_items::arrow_left.create_sprite(-110, 0);
+            
+            // Create right arrow  
+            _right_arrow = bn::sprite_items::arrow_right.create_sprite(110, 0);
+            
+            // Reset pulse counter for smooth animation
+            _pulse_counter = 0;
+        }
+        
+        void clear_navigation_arrows()
+        {
+            _left_arrow.reset();
+            _right_arrow.reset();
+        }
+        
+        void update_arrow_pulse()
+        {
+            _pulse_counter++;
+            
+            // Move arrows in and out
+            int cycle_length = 60;
+            int half_cycle = cycle_length / 2;
+            int position = _pulse_counter % cycle_length;
+            
+            bn::fixed offset;
+            if (position < half_cycle)
+            {
+                offset = bn::fixed(5) * position / half_cycle;
+            }
+            else
+            {
+                offset = bn::fixed(5) - (bn::fixed(5) * (position - half_cycle) / half_cycle);
+            }
+            
+            if (_left_arrow)
+            {
+                _left_arrow->set_x(-110 + offset);  // Move right then left
+            }
+            
+            if (_right_arrow)
+            {
+                _right_arrow->set_x(110 - offset);   // Move left then right
+            }
         }
 
         void show_intro_page()
@@ -382,20 +446,24 @@ namespace
             _text_generator.generate(0, 60, "L/R: Nav | U/D: Sel | A: OK", _text_sprites);
             
             // Show page content
-            switch(_current_carousel_page)
+            switch (_current_carousel_page)
             {
                 case carousel_page::EXPERIENCE:
                     show_experience_page();
                     break;
+                    
                 case carousel_page::PROJECTS:
                     show_projects_page();
                     break;
+                    
                 case carousel_page::SKILLS:
                     show_skills_page();
                     break;
+                    
                 case carousel_page::EDUCATION:
                     show_education_page();
                     break;
+                    
                 default:
                     break;
             }
@@ -403,13 +471,22 @@ namespace
 
         bn::string_view get_page_title()
         {
-            switch(_current_carousel_page)
+            switch (_current_carousel_page)
             {
-                case carousel_page::EXPERIENCE: return "EXPERIENCE";
-                case carousel_page::PROJECTS: return "PROJECTS";  
-                case carousel_page::SKILLS: return "SKILLS";
-                case carousel_page::EDUCATION: return "EDUCATION";
-                default: return "";
+                case carousel_page::EXPERIENCE: 
+                    return "EXPERIENCE";
+                    
+                case carousel_page::PROJECTS: 
+                    return "PROJECTS";
+                    
+                case carousel_page::SKILLS: 
+                    return "SKILLS";
+                    
+                case carousel_page::EDUCATION: 
+                    return "EDUCATION";
+                    
+                default: 
+                    return "";
             }
         }
 
@@ -419,9 +496,12 @@ namespace
             int y_pos = -40;
             
             // Haivision
-            if(_highlight_index == 0) {
+            if (_highlight_index == 0)
+            {
                 _text_generator.generate(-100, y_pos, "> Haivision", _text_sprites);
-            } else {
+            }
+            else
+            {
                 _text_generator.generate(-100, y_pos, "  Haivision", _text_sprites);
             }
             _text_generator.generate(-90, y_pos + 15, "Tech Support Eng", _text_sprites);
@@ -429,9 +509,12 @@ namespace
             y_pos += 35;
             
             // Lab Staff
-            if(_highlight_index == 1) {
+            if (_highlight_index == 1)
+            {
                 _text_generator.generate(-100, y_pos, "> UD EECIS Dept", _text_sprites);
-            } else {
+            }
+            else
+            {
                 _text_generator.generate(-100, y_pos, "  UD EECIS Dept", _text_sprites);
             }
             _text_generator.generate(-90, y_pos + 15, "Lab Staff", _text_sprites);
@@ -439,9 +522,12 @@ namespace
             y_pos += 35;
             
             // ML Research
-            if(_highlight_index == 2) {
+            if (_highlight_index == 2)
+            {
                 _text_generator.generate(-100, y_pos, "> UD Machine Learn", _text_sprites);
-            } else {
+            }
+            else
+            {
                 _text_generator.generate(-100, y_pos, "  UD Machine Learn", _text_sprites);
             }
             _text_generator.generate(-90, y_pos + 15, "Research Intern", _text_sprites);
@@ -484,7 +570,7 @@ namespace
             clear_text();
             _text_generator.set_center_alignment();
             
-            switch(_detail_section)
+            switch (_detail_section)
             {
                 case experience_section::HAIVISION:
                     _text_generator.generate(0, -60, "HAIVISION", _text_sprites);
@@ -529,28 +615,33 @@ namespace
 
         void update_intro()
         {
-            if(bn::keypad::start_pressed() || bn::keypad::a_pressed())
+            if (bn::keypad::start_pressed() || bn::keypad::a_pressed())
             {
                 bn::sound_items::alert.play();
                 _current_state = page_state::MAIN_CAROUSEL;
                 _highlight_index = 0;
+                create_navigation_arrows();  // Create arrows once when entering carousel
                 show_carousel_page();
             }
         }
 
         void update_carousel()
         {
+            // Update arrow pulsing animation
+            update_arrow_pulse();
+            
             // Handle B button to go back to intro
-            if(bn::keypad::b_pressed())
+            if (bn::keypad::b_pressed())
             {
                 bn::sound_items::alert.play();
+                clear_navigation_arrows();
                 _current_state = page_state::INTRO;
                 show_intro_page();
-                return;  // Exit early to avoid processing other inputs
+                return;
             }
 
             // Navigation between pages
-            if(bn::keypad::left_pressed())
+            if (bn::keypad::left_pressed())
             {
                 bn::sound_items::alert.play();
                 int page_index = static_cast<int>(_current_carousel_page);
@@ -559,7 +650,7 @@ namespace
                 _highlight_index = 0;
                 show_carousel_page();
             }
-            else if(bn::keypad::right_pressed())
+            else if (bn::keypad::right_pressed())
             {
                 bn::sound_items::alert.play();
                 int page_index = static_cast<int>(_current_carousel_page);
@@ -570,24 +661,25 @@ namespace
             }
             
             // Handle experience page selection
-            if(_current_carousel_page == carousel_page::EXPERIENCE)
+            if (_current_carousel_page == carousel_page::EXPERIENCE)
             {
-                if(bn::keypad::up_pressed())
+                if (bn::keypad::up_pressed())
                 {
                     bn::sound_items::alert.play();
                     _highlight_index = (_highlight_index - 1 + 3) % 3;
                     show_carousel_page();
                 }
-                else if(bn::keypad::down_pressed())
+                else if (bn::keypad::down_pressed())
                 {
                     bn::sound_items::alert.play();
                     _highlight_index = (_highlight_index + 1) % 3;
                     show_carousel_page();
                 }
                 
-                if(bn::keypad::a_pressed())
+                if (bn::keypad::a_pressed())
                 {
                     bn::sound_items::alert.play();
+                    clear_navigation_arrows();
                     _current_state = page_state::EXPERIENCE_DETAIL;
                     _detail_section = static_cast<experience_section>(_highlight_index);
                     show_experience_detail();
@@ -597,10 +689,11 @@ namespace
 
         void update_detail()
         {
-            if(bn::keypad::b_pressed())
+            if (bn::keypad::b_pressed())
             {
                 bn::sound_items::alert.play();
                 _current_state = page_state::MAIN_CAROUSEL;
+                create_navigation_arrows();  // Recreate arrows when returning to carousel
                 show_carousel_page();
             }
         }
@@ -613,7 +706,7 @@ int main()
     
     resume_game game;
     
-    while(true)
+    while (true)
     {
         game.update();
         bn::core::update();

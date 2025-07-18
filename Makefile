@@ -55,7 +55,7 @@ USERLIBS    	:=
 DEFAULTLIBS 	:=  
 STACKTRACE		:=	
 USERBUILD   	:=  
-EXTTOOL     	:=  ./convert_video.sh && ./extract_audio.sh
+EXTTOOL     	:=  #./convert_video.sh && ./extract_audio.sh
 
 #---------------------------------------------------------------------------------------------------------------------
 # Export absolute butano path:
