@@ -15,6 +15,9 @@
 #include "bn_music_items.h"
 #include "bn_sound_items.h"
 
+// Add main background header
+#include "bn_regular_bg_items_main_background.h"
+
 // Include all intro frames
 #include "bn_regular_bg_items_frame_0001.h"
 #include "bn_regular_bg_items_frame_0002.h"
@@ -97,7 +100,7 @@ namespace
     // Video intro configuration
     constexpr int VIDEO_FPS = 15;
     constexpr int VIDEO_FRAME_DELAY = 60 / VIDEO_FPS; // 4 frames at 60Hz = 15 FPS
-    constexpr int TOTAL_VIDEO_FRAMES = 75; // You have 30 frames
+    constexpr int TOTAL_VIDEO_FRAMES = 75; // You have 75 frames
 
     // Page states
     enum class page_state
@@ -224,6 +227,9 @@ namespace
         int _video_frame_index;
         int _video_frame_counter;
         bool _video_audio_started;
+        
+        // Main background variable
+        bn::optional<bn::regular_bg_ptr> _main_background;
 
     public:
         resume_game() :
@@ -326,9 +332,22 @@ namespace
 
         void setup_background()
         {
-            // Simple gradient background using palette manipulation
-            // This creates a nice blue gradient effect
+            // Clear any existing background first
+            _main_background.reset();
+            
+            // Create the background from your converted image
+            _main_background = bn::regular_bg_items::main_background.create_bg(0, 0);
+            
+            // Set priority so it appears behind sprites
+            _main_background->set_priority(3);
+            
+            // Optional: Set a fallback color
             bn::bg_palettes::set_transparent_color(bn::color(2, 4, 8));  // Dark blue
+        }
+
+        void clear_background()
+        {
+            _main_background.reset();
         }
 
         void clear_text()
