@@ -38,7 +38,7 @@ PYTHON      	:=  python3
 SOURCES     	:=  src ../butano/common/src
 INCLUDES    	:=  include ../butano/common/include
 DATA        	:=
-GRAPHICS    	:=  graphics ../butano/common/graphics
+GRAPHICS    	:=  graphics graphics/intro_frames ../butano/common/graphics
 AUDIO       	:=  audio
 AUDIOBACKEND	:=  maxmod
 AUDIOTOOL		:=  
@@ -55,7 +55,7 @@ USERLIBS    	:=
 DEFAULTLIBS 	:=  
 STACKTRACE		:=	
 USERBUILD   	:=  
-EXTTOOL     	:=  
+EXTTOOL     	:=  ./convert_video.sh && ./extract_audio.sh
 
 #---------------------------------------------------------------------------------------------------------------------
 # Export absolute butano path:
