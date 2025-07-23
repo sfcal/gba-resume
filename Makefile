@@ -31,14 +31,14 @@
 #
 # All directories are specified relative to the project directory where the makefile is found.
 #---------------------------------------------------------------------------------------------------------------------
-TARGET      	:=  $(notdir $(CURDIR))
+TARGET      	:=  web/resume
 BUILD       	:=  build
-LIBBUTANO   	:=  ../butano/butano
+LIBBUTANO   	:=  butano/butano
 PYTHON      	:=  python3
-SOURCES     	:=  src ../butano/common/src
-INCLUDES    	:=  include ../butano/common/include
+SOURCES     	:=  src butano/common/src
+INCLUDES    	:=  include butano/common/include
 DATA        	:=
-GRAPHICS    	:=  graphics graphics/intro_frames ../butano/common/graphics
+GRAPHICS    	:=  graphics graphics/intro_frames butano/common/graphics
 AUDIO       	:=  audio
 AUDIOBACKEND	:=  maxmod
 AUDIOTOOL		:=  
@@ -55,7 +55,7 @@ USERLIBS    	:=
 DEFAULTLIBS 	:=  
 STACKTRACE		:=	
 USERBUILD   	:=  
-EXTTOOL     	:=  #./convert_video.sh && ./extract_audio.sh
+EXTTOOL     	:=  #./scripts/convert_video.sh && ./scripts/extract_audio.sh
 
 #---------------------------------------------------------------------------------------------------------------------
 # Export absolute butano path:

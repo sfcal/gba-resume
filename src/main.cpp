@@ -10,6 +10,7 @@
 #include "bn_sound.h"
 #include "bn_math.h"
 #include "common_variable_8x16_sprite_font.h"
+#include "common_variable_8x8_sprite_font.h"
 
 // Audio headers
 #include "bn_music.h"
@@ -104,8 +105,8 @@ namespace
 {
     // Video intro configuration
     constexpr int VIDEO_FPS = 15;
-    constexpr int VIDEO_FRAME_DELAY = 60 / VIDEO_FPS;  // 4 frames at 60Hz = 15 FPS
-    constexpr int TOTAL_VIDEO_FRAMES = 75;              // 75 frames total
+    constexpr int VIDEO_FRAME_DELAY = 60 / VIDEO_FPS;
+    constexpr int TOTAL_VIDEO_FRAMES = 75;
 
     // Page states
     enum class page_state
@@ -220,7 +221,9 @@ namespace
     {
     private:
         bn::sprite_text_generator _text_generator;
+        bn::sprite_text_generator _small_text_generator;
         bn::vector<bn::sprite_ptr, 128> _text_sprites;
+        bn::vector<bn::sprite_ptr, 64> _small_text_sprites;
         page_state _current_state;
         carousel_page _current_carousel_page;
         experience_section _selected_experience;
@@ -244,6 +247,7 @@ namespace
     public:
         resume_game() :
             _text_generator(common::variable_8x16_sprite_font),
+            _small_text_generator(common::variable_8x8_sprite_font),
             _current_state(page_state::VIDEO_INTRO),
             _current_carousel_page(carousel_page::EXPERIENCE),
             _selected_experience(experience_section::HAIVISION),
@@ -369,6 +373,7 @@ namespace
         void clear_text()
         {
             _text_sprites.clear();
+            _small_text_sprites.clear();
         }
         
         void create_navigation_arrows()
@@ -425,15 +430,20 @@ namespace
             
             _text_generator.set_center_alignment();
             
+            // Use large font for main title
             _text_generator.generate(0, -60, "SAMUEL CALVERT", _text_sprites);
-            _text_generator.generate(0, -40, "Computer Engineering", _text_sprites);
-            _text_generator.generate(0, -25, "Professional", _text_sprites);
             
-            _text_generator.generate(0, -5, "Contact:", _text_sprites);
-            _text_generator.generate(0, 10, "(302) 513-3155", _text_sprites);
-            _text_generator.generate(0, 25, "hello@samuelcalvert.com", _text_sprites);
+            // Use small font for subtitle and details
+            _small_text_generator.set_center_alignment();
+            _small_text_generator.generate(0, -40, "computer engineering", _small_text_sprites);
+            _small_text_generator.generate(0, -30, "professional", _small_text_sprites);
             
-            _text_generator.generate(0, 50, "Press START or A", _text_sprites);
+            _small_text_generator.generate(0, -10, "contact:", _small_text_sprites);
+            _small_text_generator.generate(0, 0, "(302) 513-3155", _small_text_sprites);
+            _small_text_generator.generate(0, 10, "hello@samuelcalvert.com", _small_text_sprites);
+            
+            // Use large font for action prompt
+            _text_generator.generate(0, 50, "Press START", _text_sprites);
         }
 
         void show_carousel_page()
@@ -443,7 +453,10 @@ namespace
             // Show navigation hints
             _text_generator.set_center_alignment();
             _text_generator.generate(0, -70, get_page_title(), _text_sprites);
-            _text_generator.generate(0, 60, "L/R: Nav | U/D: Sel | A: OK", _text_sprites);
+            
+            // Use small font for navigation instructions
+            // _small_text_generator.set_center_alignment();
+            // _small_text_generator.generate(0, 65, "L/R: Navigate | U/D: Select | A: OK", _small_text_sprites);
             
             // Show page content
             switch (_current_carousel_page)
@@ -493,9 +506,10 @@ namespace
         void show_experience_page()
         {
             _text_generator.set_left_alignment();
+            _small_text_generator.set_left_alignment();
             int y_pos = -40;
             
-            // Haivision
+            // Haivision - use large font for company names
             if (_highlight_index == 0)
             {
                 _text_generator.generate(-100, y_pos, "> Haivision", _text_sprites);
@@ -504,7 +518,8 @@ namespace
             {
                 _text_generator.generate(-100, y_pos, "  Haivision", _text_sprites);
             }
-            _text_generator.generate(-90, y_pos + 15, "Tech Support Eng", _text_sprites);
+            // Use small font for job titles
+            _small_text_generator.generate(-90, y_pos + 15, "tech support engineer", _small_text_sprites);
             
             y_pos += 35;
             
@@ -517,7 +532,7 @@ namespace
             {
                 _text_generator.generate(-100, y_pos, "  UD EECIS Dept", _text_sprites);
             }
-            _text_generator.generate(-90, y_pos + 15, "Lab Staff", _text_sprites);
+            _small_text_generator.generate(-90, y_pos + 15, "lab staff", _small_text_sprites);
             
             y_pos += 35;
             
@@ -530,87 +545,122 @@ namespace
             {
                 _text_generator.generate(-100, y_pos, "  UD Machine Learn", _text_sprites);
             }
-            _text_generator.generate(-90, y_pos + 15, "Research Intern", _text_sprites);
+            _small_text_generator.generate(-90, y_pos + 15, "research intern", _small_text_sprites);
         }
 
         void show_projects_page()
         {
             _text_generator.set_left_alignment();
-            _text_generator.generate(-100, -30, "Homelab K8s Infra", _text_sprites);
-            _text_generator.generate(-90, -10, "- Multi-env clusters", _text_sprites);
-            _text_generator.generate(-90, 5, "- Infrastructure Code", _text_sprites);
-            _text_generator.generate(-90, 20, "- GitOps methods", _text_sprites);
-            _text_generator.generate(-90, 35, "- Prometheus monitor", _text_sprites);
+            _small_text_generator.set_left_alignment();
+            
+            // Use large font for project title
+            _text_generator.generate(-100, -35, "Homelab K8s Infra", _text_sprites);
+            
+            // Use small font for details
+            _small_text_generator.generate(-90, -15, "- multi-environment clusters", _small_text_sprites);
+            _small_text_generator.generate(-90, -5, "- infrastructure as code", _small_text_sprites);
+            _small_text_generator.generate(-90, 5, "- gitops deployment methods", _small_text_sprites);
+            _small_text_generator.generate(-90, 15, "- prometheus monitoring", _small_text_sprites);
+            _small_text_generator.generate(-90, 25, "- automated ci/cd pipelines", _small_text_sprites);
+            _small_text_generator.generate(-90, 35, "- service mesh architecture", _small_text_sprites);
         }
 
         void show_skills_page()
         {
             _text_generator.set_left_alignment();
-            _text_generator.generate(-100, -40, "Infrastructure:", _text_sprites);
-            _text_generator.generate(-90, -25, "K8s, Docker, Terraform", _text_sprites);
+            _small_text_generator.set_left_alignment();
+            
+            // Use large font for categories
+            _text_generator.generate(-100, -45, "Infrastructure:", _text_sprites);
+            // Use small font for skills
+            _small_text_generator.generate(-90, -30, "kubernetes, docker, terraform", _small_text_sprites);
+            _small_text_generator.generate(-90, -20, "ansible, helm, fluxcd", _small_text_sprites);
             
             _text_generator.generate(-100, -5, "Programming:", _text_sprites);
-            _text_generator.generate(-90, 10, "Bash, Python, Go", _text_sprites);
+            _small_text_generator.generate(-90, 10, "bash, python, go", _small_text_sprites);
             
-            _text_generator.generate(-100, 30, "Networking:", _text_sprites);
-            _text_generator.generate(-90, 45, "Wireshark, Nmap, GNS3", _text_sprites);
+            _text_generator.generate(-100, 25, "Networking:", _text_sprites);
+            _small_text_generator.generate(-90, 40, "wireshark, nmap, GNS3", _small_text_sprites);
         }
 
         void show_education_page()
         {
             _text_generator.set_center_alignment();
-            _text_generator.generate(0, -20, "University of Delaware", _text_sprites);
-            _text_generator.generate(0, 0, "Bachelor of Science", _text_sprites);
-            _text_generator.generate(0, 15, "Computer Engineering", _text_sprites);
-            _text_generator.generate(0, 35, "Graduated May 2022", _text_sprites);
+            _small_text_generator.set_center_alignment();
+            
+            // Use large font for university name
+            _text_generator.generate(0, -25, "University of Delaware", _text_sprites);
+            
+            // Use small font for degree details
+            _small_text_generator.generate(0, -5, "bachelor of science", _small_text_sprites);
+            _small_text_generator.generate(0, 5, "computer engineering", _small_text_sprites);
+            _small_text_generator.generate(0, 15, "graduated may 2022", _small_text_sprites);
+            
+            // Additional details with small font
+            //_small_text_generator.generate(0, 35, "GPA: 3.5/4.0", _small_text_sprites);
+            //_small_text_generator.generate(0, 45, "Dean's List: Fall 2020, Spring 2021", _small_text_sprites);
         }
 
         void show_experience_detail()
         {
             clear_text();
             _text_generator.set_center_alignment();
+            _small_text_generator.set_left_alignment();
             
             switch (_detail_section)
             {
                 case experience_section::HAIVISION:
-                    _text_generator.generate(0, -60, "HAIVISION", _text_sprites);
-                    _text_generator.generate(0, -45, "July 2022 - Present", _text_sprites);
-                    _text_generator.set_left_alignment();
-                    _text_generator.generate(-110, -20, "- Deploy problem solve", _text_sprites);
-                    _text_generator.generate(-110, -5, "- Packer images", _text_sprites);
-                    _text_generator.generate(-110, 10, "- 500+ endpoints", _text_sprites);
-                    _text_generator.generate(-110, 25, "- Stream optimization", _text_sprites);
-                    _text_generator.generate(-110, 40, "- 50Gbps peak traffic", _text_sprites);
+                    // Use large font for company name
+                    _text_generator.generate(0, -65, "HAIVISION", _text_sprites);
+                    
+                    // Use small font for date and details
+                    _small_text_generator.set_center_alignment();
+                    _small_text_generator.generate(0, -50, "July 2022 - Present", _small_text_sprites);
+                    _small_text_generator.set_left_alignment();
+                    _small_text_generator.generate(-110, -30, "- deploy & troubleshoot solutions", _small_text_sprites);
+                    _small_text_generator.generate(-110, -20, "- build custom packer images", _small_text_sprites);
+                    _small_text_generator.generate(-110, -10, "- Manage 500+ endpoints globally", _small_text_sprites);
+                    _small_text_generator.generate(-110, 0, "- optimize stream performance", _small_text_sprites);
+                    _small_text_generator.generate(-110, 10, "- handle 50Gbps peak traffic", _small_text_sprites);
+                    _small_text_generator.generate(-110, 20, "- AWS cloud deployments", _small_text_sprites);
+                    _small_text_generator.generate(-110, 30, "- python automation scripts", _small_text_sprites);
                     break;
                     
                 case experience_section::LAB_STAFF:
-                    _text_generator.generate(0, -60, "LAB STAFF", _text_sprites);
-                    _text_generator.generate(0, -45, "Jun 2019 - Aug 2021", _text_sprites);
-                    _text_generator.set_left_alignment();
-                    _text_generator.generate(-110, -20, "- 25 servers maintain", _text_sprites);
-                    _text_generator.generate(-110, -5, "- ESXi VM system", _text_sprites);
-                    _text_generator.generate(-110, 10, "- SLURM scheduling", _text_sprites);
-                    _text_generator.generate(-110, 25, "- Ansible automation", _text_sprites);
-                    _text_generator.generate(-110, 40, "- 100TB datasets", _text_sprites);
+                    _text_generator.generate(0, -65, "LAB STAFF", _text_sprites);
+                    _small_text_generator.set_center_alignment();
+                    _small_text_generator.generate(0, -50, "June 2019 - August 2021", _small_text_sprites);
+                    _small_text_generator.set_left_alignment();
+                    _small_text_generator.generate(-110, -30, "- maintain 25 production servers", _small_text_sprites);
+                    _small_text_generator.generate(-110, -20, "- VMware ESXi virtualization", _small_text_sprites);
+                    _small_text_generator.generate(-110, -10, "- SLURM job scheduling system", _small_text_sprites);
+                    _small_text_generator.generate(-110, 0, "- ansible configuration management", _small_text_sprites);
+                    _small_text_generator.generate(-110, 10, "- manage 100TB+ datasets", _small_text_sprites);
+                    _small_text_generator.generate(-110, 20, "- network security hardening", _small_text_sprites);
+                    _small_text_generator.generate(-110, 30, "- user support & training", _small_text_sprites);
                     break;
                     
                 case experience_section::MACHINE_LEARNING:
-                    _text_generator.generate(0, -60, "ML RESEARCH", _text_sprites);
-                    _text_generator.generate(0, -45, "Jun 2020 - Aug 2020", _text_sprites);
-                    _text_generator.set_left_alignment();
-                    _text_generator.generate(-110, -20, "- Network IDS", _text_sprites);
-                    _text_generator.generate(-110, -5, "- GAN neural nets", _text_sprites);
-                    _text_generator.generate(-110, 10, "- GNS3 virtual nets", _text_sprites);
-                    _text_generator.generate(-110, 25, "- Docker containers", _text_sprites);
-                    _text_generator.generate(-110, 40, "- Research docs", _text_sprites);
+                    _text_generator.generate(0, -65, "ML RESEARCH", _text_sprites);
+                    _small_text_generator.set_center_alignment();
+                    _small_text_generator.generate(0, -50, "June 2020 - August 2020", _small_text_sprites);
+                    _small_text_generator.set_left_alignment();
+                    _small_text_generator.generate(-110, -30, "- network intrusion detection", _small_text_sprites);
+                    _small_text_generator.generate(-110, -20, "- GAN neural networks design", _small_text_sprites);
+                    _small_text_generator.generate(-110, -10, "- GNS3 virtual network labs", _small_text_sprites);
+                    _small_text_generator.generate(-110, 0, "- docker containerization", _small_text_sprites);
+                    _small_text_generator.generate(-110, 10, "- research documentation", _small_text_sprites);
+                    _small_text_generator.generate(-110, 20, "- tensorflow implementation", _small_text_sprites);
+                    _small_text_generator.generate(-110, 30, "- data pipeline development", _small_text_sprites);
                     break;
                     
                 default:
                     break;
             }
             
-            _text_generator.set_center_alignment();
-            _text_generator.generate(0, 65, "Press B to go back", _text_sprites);
+            // Use small font for back instruction
+            _small_text_generator.set_center_alignment();
+            _small_text_generator.generate(0, 55, "Press B to go back", _small_text_sprites);
         }
 
         void update_intro()
