@@ -86,18 +86,24 @@
             background: rgba(100, 255, 100, 0.9);
             color: #000;
             border: none;
-            padding: 20px 40px;
-            font-size: 20px;
+            padding: 25px 50px;
+            font-size: 22px;
             font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
             z-index: 30;
             display: none;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
         
         #audio-enable:hover {
             background: rgba(150, 255, 150, 0.9);
+        }
+        
+        #audio-enable:active {
+            transform: translate(-50%, -50%) scale(0.95);
         }
         
         /* Touch Controls */
@@ -282,7 +288,7 @@
             <canvas id="screen" width="240" height="160"></canvas>
             <div id="loading">Loading...</div>
             <div id="error"></div>
-            <button id="audio-enable">🔊 Enable Audio & Start</button>
+            <button id="audio-enable">🎮 Tap to Start Game</button>
         </div>
         
         <div id="touch-controls">
@@ -337,8 +343,8 @@
         // CONFIGURATION - CHANGE THESE TO YOUR FILES
         // ============================================
         const BIOS_PATH = 'bios.bin';     // Path to your BIOS file
-        const GAME_PATH = 'resume.gba';     // Path to your game file
-        const AUTO_START = false;          // Changed to false - requires user interaction for audio
+        const GAME_PATH = 'resume.gba';    // Path to your game file
+        const AUTO_START = false;          // Keep false for mobile compatibility
         const SKIP_BOOT = false;           // Skip BIOS boot animation
         
         // ============================================
@@ -365,62 +371,60 @@
         
         // Audio Enable Function
         function enableAudioAndStart() {
-            if (!gba || !gameLoaded) return;
-            
-            // Create or resume audio context
-            if (gba.audio) {
-                // Force audio context creation if needed
-                if (!gba.audio.context) {
-                    gba.audio.context = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                
-                // Resume audio context
-                if (gba.audio.context.state === 'suspended') {
-                    gba.audio.context.resume().then(() => {
-                        console.log('Audio context resumed');
-                        audioEnabled = true;
-                    });
-                } else {
-                    audioEnabled = true;
-                }
-                
-                // Ensure master volume is set
-                gba.audio.masterVolume = 0.8;
-                
-                // Create a dummy audio node to kickstart audio
-                try {
-                    const oscillator = gba.audio.context.createOscillator();
-                    oscillator.connect(gba.audio.context.destination);
-                    oscillator.frequency.value = 0;
-                    oscillator.start();
-                    oscillator.stop(gba.audio.context.currentTime + 0.001);
-                } catch (e) {
-                    console.log('Audio kickstart error:', e);
-                }
+            if (!gba || !gameLoaded) {
+                console.log('Game not ready yet');
+                return;
             }
             
-            // Hide the enable button
+            // Hide the enable button immediately
             document.getElementById('audio-enable').style.display = 'none';
             
-            // Start the game
-            for (let i = 0; i < runCommands.length; ++i) {
-                runCommands[i]();
+            // Function to start the game
+            function startGame() {
+                try {
+                    // Start the game
+                    for (let i = 0; i < runCommands.length; ++i) {
+                        runCommands[i]();
+                    }
+                    runCommands = [];
+                    gba.runStable();
+                    console.log('Game started!');
+                    audioEnabled = true;
+                } catch (e) {
+                    console.error('Failed to start game:', e);
+                    showError('Failed to start game: ' + e.message);
+                }
             }
-            runCommands = [];
-            gba.runStable();
-            console.log('Game started with audio enabled!');
-        }
-        
-        // Update audio status indicator
-        function updateAudioStatus(enabled) {
-            const status = document.getElementById('audio-status');
-            if (enabled) {
-                status.className = 'enabled';
-                status.textContent = '🔊 Audio: On';
-            } else {
-                status.className = 'disabled';
-                status.textContent = '🔇 Audio: Off';
+            
+            // Try to initialize audio, but start game regardless
+            if (gba.audio) {
+                try {
+                    // Create new audio context if needed
+                    if (!gba.audio.context || gba.audio.context.state === 'closed') {
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        gba.audio.context = new AudioContext();
+                        console.log('Created new audio context');
+                    }
+                    
+                    // Set master volume
+                    gba.audio.masterVolume = 0.8;
+                    
+                    // Check audio context state
+                    if (gba.audio.context.state === 'suspended') {
+                        // Try to resume, but don't wait
+                        gba.audio.context.resume().then(() => {
+                            console.log('Audio context resumed successfully');
+                        }).catch(err => {
+                            console.log('Audio resume failed:', err);
+                        });
+                    }
+                } catch (e) {
+                    console.log('Audio initialization error:', e);
+                }
             }
+            
+            // Start the game immediately regardless of audio
+            startGame();
         }
         
         // Touch control handlers
@@ -469,10 +473,19 @@
                     e.preventDefault();
                     
                     // Enable audio on first touch if not already enabled
-                    if (!audioEnabled && gba && gba.audio && gba.audio.context) {
-                        gba.audio.context.resume();
-                        audioEnabled = true;
-                        updateAudioStatus(true);
+                    if (!audioEnabled && gba && gba.audio) {
+                        try {
+                            if (!gba.audio.context || gba.audio.context.state === 'closed') {
+                                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                                gba.audio.context = new AudioContext();
+                            }
+                            if (gba.audio.context.state === 'suspended') {
+                                gba.audio.context.resume();
+                            }
+                            audioEnabled = true;
+                        } catch (e) {
+                            console.log('Touch audio enable failed:', e);
+                        }
                     }
                     
                     const event = createKeyboardEvent('keydown', key);
@@ -569,9 +582,10 @@
                     }
                 });
                 
-                // Configure audio
+                // Configure audio (but don't create context yet on mobile)
                 if (gba.audio) {
                     gba.audio.masterVolume = 0.8;
+                    // Don't create audio context here - wait for user interaction
                 }
                 
                 // Load BIOS
@@ -615,6 +629,11 @@
                                 // Show the audio enable button
                                 document.getElementById('audio-enable').style.display = 'block';
                                 
+                                // On desktop, auto-start might work
+                                if (!('ontouchstart' in window) && AUTO_START) {
+                                    setTimeout(enableAudioAndStart, 100);
+                                }
+                                
                             } catch (e) {
                                 showError(`Failed to set ROM: ${e.message}`);
                             }
@@ -641,8 +660,13 @@
             // Set up touch controls
             setupTouchControls();
             
-            // Set up audio enable button
-            document.getElementById('audio-enable').addEventListener('click', enableAudioAndStart);
+            // Set up audio enable button with both click and touch support
+            const audioBtn = document.getElementById('audio-enable');
+            audioBtn.addEventListener('click', enableAudioAndStart);
+            audioBtn.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                enableAudioAndStart();
+            });
             
             // Prevent zoom on iOS
             document.addEventListener('gesturestart', function(e) {
