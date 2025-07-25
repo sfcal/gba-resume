@@ -100,13 +100,43 @@
 #include "bn_regular_bg_items_frame_0073.h"
 #include "bn_regular_bg_items_frame_0074.h"
 #include "bn_regular_bg_items_frame_0075.h"
+#include "bn_regular_bg_items_frame_0076.h"
+#include "bn_regular_bg_items_frame_0077.h"
+#include "bn_regular_bg_items_frame_0078.h"
+#include "bn_regular_bg_items_frame_0079.h"
+#include "bn_regular_bg_items_frame_0080.h"
+#include "bn_regular_bg_items_frame_0081.h"
+#include "bn_regular_bg_items_frame_0082.h"
+#include "bn_regular_bg_items_frame_0083.h"
+#include "bn_regular_bg_items_frame_0084.h"
+#include "bn_regular_bg_items_frame_0085.h"
+#include "bn_regular_bg_items_frame_0086.h"
+#include "bn_regular_bg_items_frame_0087.h"
+#include "bn_regular_bg_items_frame_0088.h"
+#include "bn_regular_bg_items_frame_0089.h"
+#include "bn_regular_bg_items_frame_0090.h"
+#include "bn_regular_bg_items_frame_0091.h"
+#include "bn_regular_bg_items_frame_0092.h"
+#include "bn_regular_bg_items_frame_0093.h"
+#include "bn_regular_bg_items_frame_0094.h"
+#include "bn_regular_bg_items_frame_0095.h"
+#include "bn_regular_bg_items_frame_0096.h"
+#include "bn_regular_bg_items_frame_0097.h"
+#include "bn_regular_bg_items_frame_0098.h"
+#include "bn_regular_bg_items_frame_0099.h"
+#include "bn_regular_bg_items_frame_0100.h"
+#include "bn_regular_bg_items_frame_0101.h"
+#include "bn_regular_bg_items_frame_0102.h"
+#include "bn_regular_bg_items_frame_0103.h"
+#include "bn_regular_bg_items_frame_0104.h"
+#include "bn_regular_bg_items_frame_0105.h"
 
 namespace
 {
     // Video intro configuration
     constexpr int VIDEO_FPS = 15;
     constexpr int VIDEO_FRAME_DELAY = 60 / VIDEO_FPS;
-    constexpr int TOTAL_VIDEO_FRAMES = 75;
+    constexpr int TOTAL_VIDEO_FRAMES = 105;
 
     // Page states
     enum class page_state
@@ -211,7 +241,37 @@ namespace
             &bn::regular_bg_items::frame_0072,
             &bn::regular_bg_items::frame_0073,
             &bn::regular_bg_items::frame_0074,
-            &bn::regular_bg_items::frame_0075
+            &bn::regular_bg_items::frame_0075,
+            &bn::regular_bg_items::frame_0076,
+            &bn::regular_bg_items::frame_0077,
+            &bn::regular_bg_items::frame_0078,
+            &bn::regular_bg_items::frame_0079,
+            &bn::regular_bg_items::frame_0080,
+            &bn::regular_bg_items::frame_0081,
+            &bn::regular_bg_items::frame_0082,
+            &bn::regular_bg_items::frame_0083,
+            &bn::regular_bg_items::frame_0084,
+            &bn::regular_bg_items::frame_0085,
+            &bn::regular_bg_items::frame_0086,
+            &bn::regular_bg_items::frame_0087,
+            &bn::regular_bg_items::frame_0088,
+            &bn::regular_bg_items::frame_0089,
+            &bn::regular_bg_items::frame_0090,
+            &bn::regular_bg_items::frame_0091,
+            &bn::regular_bg_items::frame_0092,
+            &bn::regular_bg_items::frame_0093,
+            &bn::regular_bg_items::frame_0094,
+            &bn::regular_bg_items::frame_0095,
+            &bn::regular_bg_items::frame_0096,
+            &bn::regular_bg_items::frame_0097,
+            &bn::regular_bg_items::frame_0098,
+            &bn::regular_bg_items::frame_0099,
+            &bn::regular_bg_items::frame_0100,
+            &bn::regular_bg_items::frame_0101,
+            &bn::regular_bg_items::frame_0102,
+            &bn::regular_bg_items::frame_0103,
+            &bn::regular_bg_items::frame_0104,
+            &bn::regular_bg_items::frame_0105
         };
         
         constexpr int frame_count = sizeof(frames) / sizeof(frames[0]);
