@@ -184,6 +184,20 @@
         }
         
         /* ========================================
+           DESKTOP CONTROLS INFO
+           ======================================== */
+        #desktop-controls {
+            display: none;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            color: var(--color-text-muted);
+            background: var(--color-bg-control);
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        /* ========================================
            TOUCH CONTROLS
            ======================================== */
         #touch-controls {
@@ -374,19 +388,6 @@
         }
         
         /* ========================================
-           DESKTOP CONTROLS INFO
-           ======================================== */
-        #desktop-controls {
-            display: none;
-            text-align: center;
-            padding: 15px;
-            font-size: 14px;
-            color: var(--color-text-muted);
-            background: var(--color-bg-control);
-            border-top: 1px solid var(--color-border);
-        }
-        
-        /* ========================================
            RESPONSIVE DESIGN
            ======================================== */
         @media (orientation: landscape) {
@@ -438,6 +439,7 @@
         @media (min-width: 1024px) {
             #touch-controls {
                 display: flex !important;
+                border-top: none;
             }
             
             #controls-inner {
@@ -479,6 +481,10 @@
             </div>
         </div>
         
+        <div id="desktop-controls">
+            <strong>Keyboard Controls:</strong> Arrow Keys (D-Pad) | Z (A) | X (B) | Enter (Start) | Shift (Select)
+        </div>
+        
         <div id="touch-controls">
             <div id="controls-inner">
                 <!-- D-Pad -->
@@ -504,10 +510,6 @@
                     <button class="action-btn" id="btn-b" data-key="x">B</button>
                 </div>
             </div>
-        </div>
-        
-        <div id="desktop-controls">
-            <strong>Keyboard Controls:</strong> Arrow Keys (D-Pad) | Z (A) | X (B) | Enter (Start) | Shift (Select)
         </div>
     </div>
 
