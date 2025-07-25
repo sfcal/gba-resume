@@ -17,7 +17,7 @@ An interactive resume built as a Game Boy Advance homebrew application using the
 
 1. **Clone the repository with submodules:**
    ```bash
-   git clone --recursive https://github.com/yourusername/gba-resume.git
+   git clone --recursive https://github.com/sfcal/gba-resume.git
    cd gba-resume
    ```
 
