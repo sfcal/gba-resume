@@ -34,24 +34,24 @@ AUDIO_CHANNELS = 1  # Mono for GBA
 AUDIO_BITRATE = "64k"  # Reasonable quality for GBA
 
 def get_fixed_palette():
-    """Return the fixed 16-color palette"""
+    """Return the fixed 16-color palette with good blues and better skin tones"""
     palette = [
-        (0, 0, 0),          # Color 0
-        (33, 21, 13),       # Color 1
-        (53, 43, 30),       # Color 2
-        (66, 58, 41),       # Color 3
-        (78, 69, 51),       # Color 4
-        (92, 81, 64),       # Color 5
-        (109, 97, 77),      # Color 6
-        (124, 112, 90),     # Color 7
-        (137, 127, 105),    # Color 8
-        (147, 139, 121),    # Color 9
-        (152, 149, 136),    # Color 10
-        (184, 167, 145),    # Color 11
-        (195, 190, 183),    # Color 12
-        (221, 200, 175),    # Color 13
-        (212, 209, 207),    # Color 14
-        (229, 229, 228),    # Color 15
+        (0, 0, 0),          # Color 0 - Pure black
+        (15, 20, 30),       # Color 1 - Very dark blue-black
+        (30, 35, 50),       # Color 2 - Dark blue-gray
+        (45, 50, 70),       # Color 3 - Midnight blue
+        (60, 65, 85),       # Color 4 - Dark slate blue
+        (75, 80, 100),      # Color 5 - Slate blue
+        (90, 95, 115),      # Color 6 - Steel blue
+        (110, 110, 130),    # Color 7 - Light steel blue
+        (140, 85, 60),      # Color 8 - Deep shadow (warm brown)
+        (170, 105, 75),     # Color 9 - Dark skin/shadow
+        (200, 130, 95),     # Color 10 - Medium brown skin
+        (220, 155, 115),    # Color 11 - Natural tan skin
+        (235, 175, 135),    # Color 12 - Light skin tone
+        (245, 195, 160),    # Color 13 - Fair skin
+        (250, 215, 185),    # Color 14 - Very light skin
+        (255, 245, 235),    # Color 15 - Highlights/white
     ]
     return palette
 
