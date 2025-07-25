@@ -25,6 +25,7 @@
 #include "bn_sprite_items_arrow_right.h"
 
 // Intro frame headers
+#include "bn_regular_bg_items_frame_0000.h"
 #include "bn_regular_bg_items_frame_0001.h"
 #include "bn_regular_bg_items_frame_0002.h"
 #include "bn_regular_bg_items_frame_0003.h"
@@ -129,7 +130,6 @@
 #include "bn_regular_bg_items_frame_0102.h"
 #include "bn_regular_bg_items_frame_0103.h"
 #include "bn_regular_bg_items_frame_0104.h"
-#include "bn_regular_bg_items_frame_0105.h"
 
 namespace
 {
@@ -167,6 +167,7 @@ namespace
     namespace video
     {
         constexpr const bn::regular_bg_item* frames[] = {
+            &bn::regular_bg_items::frame_0000,
             &bn::regular_bg_items::frame_0001,
             &bn::regular_bg_items::frame_0002,
             &bn::regular_bg_items::frame_0003,
@@ -270,8 +271,7 @@ namespace
             &bn::regular_bg_items::frame_0101,
             &bn::regular_bg_items::frame_0102,
             &bn::regular_bg_items::frame_0103,
-            &bn::regular_bg_items::frame_0104,
-            &bn::regular_bg_items::frame_0105
+            &bn::regular_bg_items::frame_0104
         };
         
         constexpr int frame_count = sizeof(frames) / sizeof(frames[0]);
@@ -405,7 +405,7 @@ namespace
             
             // Set up normal background and transition to intro
             setup_background();
-            bn::music_items::cyberrid.play(0.5, true);
+            bn::music_items::cyberrid.play(0.15, true);
             _current_state = page_state::INTRO;
             show_intro_page();
         }
