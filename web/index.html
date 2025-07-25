@@ -92,7 +92,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: var(--screen-padding);
+            padding: 0; /* Remove padding for mobile by default */
             background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg-primary));
             min-height: 0;
             overflow: hidden;
@@ -102,15 +102,12 @@
             position: relative;
             aspect-ratio: 240 / 160;
             width: 100%;
-            max-width: min(
-                90vw,
-                calc((100vh - 280px) * var(--gba-aspect-ratio))
-            );
+            max-width: 100%; /* Full width on mobile */
             max-height: 100%;
             background: #000;
-            border-radius: 8px;
+            border-radius: 0; /* No border radius on mobile */
             overflow: hidden;
-            box-shadow: var(--shadow-screen);
+            box-shadow: none; /* Remove shadow on mobile */
         }
         
         #screen {
@@ -215,10 +212,7 @@
         
         #controls-inner {
             width: 100%;
-            max-width: min(
-                90vw,
-                calc((100vh - 280px) * var(--gba-aspect-ratio))
-            );
+            max-width: 100%; /* Full width on mobile */
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -417,14 +411,6 @@
                 padding: 10px 15px 20px 15px;
             }
             
-            #controls-inner,
-            #screen-container {
-                max-width: min(
-                    calc(100vw - 20px),
-                    calc((100vh - 200px) * var(--gba-aspect-ratio))
-                );
-            }
-            
             #controls-inner {
                 transform: scale(0.9);
                 transform-origin: center center;
@@ -436,7 +422,24 @@
             }
         }
         
+        /* ========================================
+           DESKTOP STYLES (UNCHANGED)
+           ======================================== */
         @media (min-width: 1024px) {
+            /* Restore desktop styling */
+            #screen-wrapper {
+                padding: var(--screen-padding);
+            }
+            
+            #screen-container {
+                max-width: min(
+                    60vw,
+                    calc((100vh - 280px) * var(--gba-aspect-ratio))
+                );
+                border-radius: 8px;
+                box-shadow: var(--shadow-screen);
+            }
+            
             #touch-controls {
                 display: flex !important;
                 border-top: none;
@@ -453,13 +456,6 @@
             
             #desktop-controls {
                 display: block;
-            }
-            
-            #screen-container {
-                max-width: min(
-                    60vw,
-                    calc((100vh - 280px) * var(--gba-aspect-ratio))
-                );
             }
             
             .dpad-btn:hover,
