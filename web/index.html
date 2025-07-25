@@ -195,6 +195,29 @@
         }
         
         /* ========================================
+           SOUND BANNER (MOBILE ONLY)
+           ======================================== */
+        #sound-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 165, 0, 0.15);
+            border-top: 1px solid rgba(255, 165, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 165, 0, 0.3);
+            padding: 10px 15px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            gap: 8px;
+            line-height: 1.4;
+        }
+        
+        #sound-banner span {
+            font-size: 18px;
+            opacity: 0.8;
+        }
+        
+        /* ========================================
            TOUCH CONTROLS
            ======================================== */
         #touch-controls {
@@ -458,6 +481,10 @@
                 display: block;
             }
             
+            #sound-banner {
+                display: none;
+            }
+            
             .dpad-btn:hover,
             .menu-btn:hover,
             .action-btn:hover {
@@ -479,6 +506,10 @@
         
         <div id="desktop-controls">
             <strong>Keyboard Controls:</strong> Arrow Keys (D-Pad) | Z (A) | X (B) | Enter (Start) | Shift (Select)
+        </div>
+        
+        <div id="sound-banner">
+            <span>🔇</span> If you aren't hearing any sound, turn your phone off silence
         </div>
         
         <div id="touch-controls">
