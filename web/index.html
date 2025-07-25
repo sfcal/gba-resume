@@ -1,11 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>GBA Resume</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>GBA Resume</title>
+    
     <style>
+        /* ========================================
+           CSS CUSTOM PROPERTIES
+           ======================================== */
+        :root {
+            /* Colors */
+            --color-bg-primary: #0a0a0a;
+            --color-bg-secondary: #1a1a1a;
+            --color-bg-control: rgba(20, 20, 20, 0.95);
+            --color-text-primary: #fff;
+            --color-text-secondary: rgba(255, 255, 255, 0.7);
+            --color-text-muted: rgba(255, 255, 255, 0.5);
+            --color-border: rgba(255, 255, 255, 0.1);
+            --color-border-control: rgba(255, 255, 255, 0.2);
+            --color-error: rgba(220, 50, 50, 0.95);
+            --color-success: #4CAF50;
+            --color-btn-a: #e74c3c;
+            --color-btn-b: #3498db;
+            
+            /* Dimensions */
+            --gba-aspect-ratio: 1.5; /* 240/160 */
+            --control-height: min(240px, 35vh);
+            --control-height-landscape: min(200px, 40vh);
+            --control-height-small: 180px;
+            --screen-padding: 5px;
+            --control-padding: 15px 20px 25px 20px;
+            
+            /* Shadows */
+            --shadow-screen: 0 0 0 2px var(--color-border),
+                           0 10px 40px rgba(0, 0, 0, 0.8),
+                           inset 0 0 20px rgba(0, 0, 0, 0.5);
+            --shadow-control: 0 2px 10px rgba(0, 0, 0, 0.4),
+                            inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+            --shadow-control-active: 0 1px 5px rgba(0, 0, 0, 0.4),
+                                   inset 0 2px 4px rgba(0, 0, 0, 0.4);
+            --shadow-action: 0 4px 15px rgba(0, 0, 0, 0.4),
+                           inset 0 -3px 6px rgba(0, 0, 0, 0.4);
+            --shadow-action-active: 0 2px 8px rgba(0, 0, 0, 0.4),
+                                  inset 0 3px 6px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* ========================================
+           RESET & BASE STYLES
+           ======================================== */
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -17,8 +61,8 @@
         body {
             margin: 0;
             padding: 0;
-            background: #0a0a0a;
-            color: #fff;
+            background: var(--color-bg-primary);
+            color: var(--color-text-primary);
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
             overflow: hidden;
             position: fixed;
@@ -26,16 +70,21 @@
             height: 100%;
         }
         
+        /* ========================================
+           LAYOUT STRUCTURE
+           ======================================== */
         #container {
             display: flex;
             flex-direction: column;
             height: 100vh;
-            height: 100dvh; /* Dynamic viewport height for mobile browsers */
+            height: 100dvh;
             width: 100vw;
             position: relative;
         }
         
-        /* Screen Area - Now with dynamic sizing */
+        /* ========================================
+           SCREEN AREA
+           ======================================== */
         #screen-wrapper {
             position: relative;
             width: 100%;
@@ -43,44 +92,25 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 5px; /* Reduced padding */
-            background: linear-gradient(to bottom, #1a1a1a, #0a0a0a);
-            min-height: 0; /* Important for flexbox */
-            overflow: hidden; /* Prevent overflow */
+            padding: var(--screen-padding);
+            background: linear-gradient(to bottom, var(--color-bg-secondary), var(--color-bg-primary));
+            min-height: 0;
+            overflow: hidden;
         }
         
         #screen-container {
             position: relative;
-            /* Let aspect-ratio handle the sizing */
-            aspect-ratio: 240 / 160; /* GBA's native aspect ratio - 1.5:1 or 3:2 */
+            aspect-ratio: 240 / 160;
             width: 100%;
-            max-width: calc(100% - 20px); /* Leave some padding */
-            max-height: 100%;
-            
-            /* Responsive sizing based on available space */
             max-width: min(
-                90vw, /* Max 90% of viewport width */
-                calc((100vh - 280px) * 1.5) /* Calculate width from available height */
+                90vw,
+                calc((100vh - 280px) * var(--gba-aspect-ratio))
             );
-            
-            /* Styling */
+            max-height: 100%;
             background: #000;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 
-                0 0 0 2px rgba(255, 255, 255, 0.1),
-                0 10px 40px rgba(0, 0, 0, 0.8),
-                inset 0 0 20px rgba(0, 0, 0, 0.5);
-        }
-        
-        /* Adjust screen container for landscape orientation */
-        @media (orientation: landscape) {
-            #screen-container {
-                max-width: min(
-                    calc(60vw), /* Smaller percentage in landscape */
-                    calc((100vh - 100px) * 1.5) /* Height-based calculation */
-                );
-            }
+            box-shadow: var(--shadow-screen);
         }
         
         #screen {
@@ -90,15 +120,21 @@
             width: 100%;
             height: 100%;
             display: block;
-            object-fit: contain; /* Ensure canvas maintains aspect ratio */
+            object-fit: contain;
         }
         
-        #loading {
+        /* ========================================
+           UI OVERLAYS
+           ======================================== */
+        .overlay {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
+        }
+        
+        #loading {
             font-size: 16px;
             color: #888;
             z-index: 10;
@@ -109,7 +145,7 @@
             top: 10px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(220, 50, 50, 0.95);
+            background: var(--color-error);
             padding: 12px 20px;
             border-radius: 8px;
             display: none;
@@ -120,14 +156,9 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
         
-        /* Audio Enable Button */
         #audio-enable {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #4CAF50, #45a049);
-            color: #fff;
+            background: linear-gradient(135deg, var(--color-success), #45a049);
+            color: var(--color-text-primary);
             border: none;
             padding: 20px 40px;
             font-size: 18px;
@@ -136,17 +167,10 @@
             cursor: pointer;
             z-index: 30;
             display: none;
-            box-shadow: 
-                0 4px 20px rgba(76, 175, 80, 0.4),
-                0 2px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.4),
+                       0 2px 10px rgba(0, 0, 0, 0.3);
             touch-action: manipulation;
             animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.05); }
-            100% { transform: translate(-50%, -50%) scale(1); }
         }
         
         #audio-enable:active {
@@ -154,26 +178,32 @@
             animation: none;
         }
         
-        /* Touch Controls Container - Fixed height but responsive */
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+        
+        /* ========================================
+           TOUCH CONTROLS
+           ======================================== */
         #touch-controls {
             position: relative;
             width: 100%;
-            height: min(240px, 35vh); /* Dynamic height with max limit */
-            background: linear-gradient(to bottom, rgba(20, 20, 20, 0.95), rgba(15, 15, 15, 0.98));
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 15px 20px 25px 20px;
+            height: var(--control-height);
+            background: linear-gradient(to bottom, var(--color-bg-control), rgba(15, 15, 15, 0.98));
+            border-top: 1px solid var(--color-border);
+            padding: var(--control-padding);
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            flex-shrink: 0; /* Prevent shrinking */
+            flex-shrink: 0;
         }
         
-        /* Inner controls wrapper for desktop width constraint */
         #controls-inner {
             width: 100%;
             max-width: min(
-                90vw, /* Max 90% of viewport width */
-                calc((100vh - 280px) * 1.5) /* Same as screen container */
+                90vw,
+                calc((100vh - 280px) * var(--gba-aspect-ratio))
             );
             margin: 0 auto;
             display: flex;
@@ -183,55 +213,9 @@
             height: 100%;
         }
         
-        /* Adjust controls for landscape */
-        @media (orientation: landscape) {
-            #touch-controls {
-                height: min(200px, 40vh);
-                padding: 10px 20px 15px 20px;
-            }
-            
-            #controls-inner {
-                max-width: min(
-                    calc(60vw), /* Match screen container in landscape */
-                    calc((100vh - 100px) * 1.5)
-                );
-            }
-            
-            #screen-wrapper {
-                padding: 5px;
-            }
-        }
-        
-        /* Adjust controls for very small screens */
-        @media (max-height: 600px) {
-            #touch-controls {
-                height: 180px;
-                padding: 10px 15px 20px 15px;
-            }
-            
-            #controls-inner {
-                max-width: min(
-                    calc(100vw - 20px),
-                    calc((100vh - 200px) * 1.5) /* Adjusted for smaller controls */
-                );
-                transform: scale(0.9);
-                transform-origin: center center;
-            }
-            
-            #screen-container {
-                max-width: min(
-                    calc(100vw - 20px),
-                    calc((100vh - 200px) * 1.5) /* Adjusted for smaller controls */
-                );
-            }
-            
-            .menu-btn {
-                padding: 8px 16px;
-                font-size: 11px;
-            }
-        }
-        
-        /* D-Pad Container */
+        /* ========================================
+           D-PAD CONTROLS
+           ======================================== */
         #dpad-container {
             position: relative;
             width: 140px;
@@ -246,37 +230,33 @@
         
         .dpad-btn {
             position: absolute;
-            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, #2a2a2a, var(--color-bg-secondary));
+            border: 2px solid var(--color-border-control);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--color-text-secondary);
             font-size: 20px;
             transition: all 0.1s;
-            box-shadow: 
-                0 2px 10px rgba(0, 0, 0, 0.4),
-                inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow-control);
             cursor: pointer;
         }
         
         .dpad-btn:active {
             background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
-            box-shadow: 
-                0 1px 5px rgba(0, 0, 0, 0.4),
-                inset 0 2px 4px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow-control-active);
             transform: translateY(1px);
-            color: #fff;
+            color: var(--color-text-primary);
         }
         
-        #dpad-up, #dpad-down {
+        .dpad-vertical {
             width: 46px;
             height: 60px;
             left: 47px;
         }
         
-        #dpad-left, #dpad-right {
+        .dpad-horizontal {
             width: 60px;
             height: 46px;
             top: 47px;
@@ -308,13 +288,15 @@
             left: 47px;
             width: 46px;
             height: 46px;
-            background: radial-gradient(circle, #1a1a1a, #0a0a0a);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: radial-gradient(circle, var(--color-bg-secondary), var(--color-bg-primary));
+            border: 2px solid var(--color-border);
             pointer-events: none;
             border-radius: 4px;
         }
         
-        /* Center Controls */
+        /* ========================================
+           CENTER CONTROLS
+           ======================================== */
         #center-controls {
             position: absolute;
             bottom: 10px;
@@ -327,31 +309,29 @@
         
         .menu-btn {
             padding: 10px 20px;
-            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(135deg, #2a2a2a, var(--color-bg-secondary));
+            border: 2px solid var(--color-border-control);
             border-radius: 25px;
             font-size: 12px;
             font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
+            color: var(--color-text-secondary);
             transition: all 0.1s;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            box-shadow: 
-                0 2px 10px rgba(0, 0, 0, 0.4),
-                inset 0 -2px 4px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow-control);
             cursor: pointer;
         }
         
         .menu-btn:active {
             background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
             transform: translateY(1px);
-            box-shadow: 
-                0 1px 5px rgba(0, 0, 0, 0.4),
-                inset 0 2px 4px rgba(0, 0, 0, 0.4);
-            color: #fff;
+            box-shadow: var(--shadow-control-active);
+            color: var(--color-text-primary);
         }
         
-        /* Action Buttons Container */
+        /* ========================================
+           ACTION BUTTONS
+           ======================================== */
         #action-container {
             position: relative;
             width: 140px;
@@ -370,79 +350,121 @@
             justify-content: center;
             font-weight: bold;
             font-size: 22px;
-            color: #fff;
+            color: var(--color-text-primary);
             transition: all 0.1s;
-            box-shadow: 
-                0 4px 15px rgba(0, 0, 0, 0.4),
-                inset 0 -3px 6px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow-action);
             cursor: pointer;
         }
         
         .action-btn:active {
             transform: scale(0.95) translateY(2px);
-            box-shadow: 
-                0 2px 8px rgba(0, 0, 0, 0.4),
-                inset 0 3px 6px rgba(0, 0, 0, 0.4);
+            box-shadow: var(--shadow-action-active);
         }
         
         #btn-a { 
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            background: linear-gradient(135deg, var(--color-btn-a), #c0392b);
             right: 0;
             bottom: 35px;
         }
         
         #btn-b { 
-            background: linear-gradient(135deg, #3498db, #2980b9);
+            background: linear-gradient(135deg, var(--color-btn-b), #2980b9);
             left: 35px;
             bottom: 0;
         }
         
-        /* Desktop Mode - MODIFIED to show touch controls */
-        @media (min-width: 1024px) {
-            /* Keep touch controls visible on desktop */
-            #touch-controls {
-                display: flex !important;
-                /* Remove transform from here */
+        /* ========================================
+           DESKTOP CONTROLS INFO
+           ======================================== */
+        #desktop-controls {
+            display: none;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            color: var(--color-text-muted);
+            background: var(--color-bg-control);
+            border-top: 1px solid var(--color-border);
+        }
+        
+        /* ========================================
+           RESPONSIVE DESIGN
+           ======================================== */
+        @media (orientation: landscape) {
+            #screen-container {
+                max-width: min(
+                    60vw,
+                    calc((100vh - 100px) * var(--gba-aspect-ratio))
+                );
             }
             
-            /* Apply the same width constraints as screen */
+            #touch-controls {
+                height: var(--control-height-landscape);
+                padding: 10px 20px 15px 20px;
+            }
+            
             #controls-inner {
                 max-width: min(
-                    calc(60vw), /* Same as screen container in desktop */
-                    calc((100vh - 280px) * 1.5)
+                    60vw,
+                    calc((100vh - 100px) * var(--gba-aspect-ratio))
                 );
-                /* Optional: scale controls slightly on desktop */
+            }
+        }
+        
+        @media (max-height: 600px) {
+            #touch-controls {
+                height: var(--control-height-small);
+                padding: 10px 15px 20px 15px;
+            }
+            
+            #controls-inner,
+            #screen-container {
+                max-width: min(
+                    calc(100vw - 20px),
+                    calc((100vh - 200px) * var(--gba-aspect-ratio))
+                );
+            }
+            
+            #controls-inner {
+                transform: scale(0.9);
+                transform-origin: center center;
+            }
+            
+            .menu-btn {
+                padding: 8px 16px;
+                font-size: 11px;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            #touch-controls {
+                display: flex !important;
+            }
+            
+            #controls-inner {
+                max-width: min(
+                    60vw,
+                    calc((100vh - 280px) * var(--gba-aspect-ratio))
+                );
                 transform: scale(0.9);
                 transform-origin: center center;
             }
             
             #desktop-controls {
                 display: block;
-                text-align: center;
-                padding: 15px;
-                font-size: 14px;
-                color: rgba(255, 255, 255, 0.5);
-                background: rgba(20, 20, 20, 0.95);
-                border-top: 1px solid rgba(255, 255, 255, 0.1);
             }
             
             #screen-container {
                 max-width: min(
-                    calc(60vw), /* Reduced to accommodate controls */
-                    calc((100vh - 280px) * 1.5) /* Height-based calculation */
+                    60vw,
+                    calc((100vh - 280px) * var(--gba-aspect-ratio))
                 );
             }
             
-            /* Make buttons more responsive on desktop */
             .dpad-btn:hover,
             .menu-btn:hover,
             .action-btn:hover {
                 filter: brightness(1.2);
             }
-        }
-        
-        #desktop-controls {
-            display: none;
         }
     </style>
 </head>
@@ -451,9 +473,9 @@
         <div id="screen-wrapper">
             <div id="screen-container">
                 <canvas id="screen" width="240" height="160"></canvas>
-                <div id="loading">Loading...</div>
+                <div id="loading" class="overlay">Loading...</div>
                 <div id="error"></div>
-                <button id="audio-enable">🎮 Tap to Start Game</button>
+                <button id="audio-enable" class="overlay">Tap to Start Game</button>
             </div>
         </div>
         
@@ -462,10 +484,10 @@
                 <!-- D-Pad -->
                 <div id="dpad-container">
                     <div id="dpad">
-                        <div class="dpad-btn" id="dpad-up" data-key="ArrowUp">↑</div>
-                        <div class="dpad-btn" id="dpad-down" data-key="ArrowDown">↓</div>
-                        <div class="dpad-btn" id="dpad-left" data-key="ArrowLeft">←</div>
-                        <div class="dpad-btn" id="dpad-right" data-key="ArrowRight">→</div>
+                        <div class="dpad-btn dpad-vertical" id="dpad-up" data-key="ArrowUp">↑</div>
+                        <div class="dpad-btn dpad-vertical" id="dpad-down" data-key="ArrowDown">↓</div>
+                        <div class="dpad-btn dpad-horizontal" id="dpad-left" data-key="ArrowLeft">←</div>
+                        <div class="dpad-btn dpad-horizontal" id="dpad-right" data-key="ArrowRight">→</div>
                         <div id="dpad-center"></div>
                     </div>
                 </div>
@@ -489,7 +511,7 @@
         </div>
     </div>
 
-    <!-- Include all GBA.js files -->
+    <!-- GBA.js Dependencies -->
     <script src="js/util.js"></script>
     <script src="js/core.js"></script>
     <script src="js/arm.js"></script>
@@ -508,342 +530,414 @@
     <script src="js/gba.js"></script>
 
     <script>
-        // ============================================
-        // CONFIGURATION - CHANGE THESE TO YOUR FILES
-        // ============================================
-        const BIOS_PATH = 'bios.bin';     // Path to your BIOS file
-        const GAME_PATH = 'resume.gba';    // Path to your game file
-        const AUTO_START = false;          // Keep false for mobile compatibility
-        const SKIP_BOOT = false;           // Skip BIOS boot animation
+        'use strict';
         
-        // ============================================
-        // MOBILE SUPPORT CODE
-        // ============================================
+        // ========================================
+        // CONFIGURATION
+        // ========================================
+        const CONFIG = {
+            BIOS_PATH: 'bios.bin',
+            GAME_PATH: 'resume.gba',
+            AUTO_START: false,
+            SKIP_BOOT: false,
+            AUDIO_VOLUME: 0.8
+        };
         
-        let gba;
-        let runCommands = [];
-        let audioEnabled = false;
-        let gameLoaded = false;
+        // ========================================
+        // KEY MAPPING
+        // ========================================
+        const KEY_MAP = {
+            'ArrowUp': 38,
+            'ArrowDown': 40,
+            'ArrowLeft': 37,
+            'ArrowRight': 39,
+            'z': 90,
+            'x': 88,
+            'Enter': 13,
+            'Shift': 16,
+            'q': 81,
+            'w': 87
+        };
         
-        // Handle viewport changes (for mobile browser UI)
-        function handleViewportChange() {
-            // Update CSS custom property for dynamic viewport height
-            const vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        // ========================================
+        // EMULATOR STATE
+        // ========================================
+        class EmulatorState {
+            constructor() {
+                this.gba = null;
+                this.runCommands = [];
+                this.audioEnabled = false;
+                this.gameLoaded = false;
+            }
         }
         
-        // Call on load and resize
-        window.addEventListener('resize', handleViewportChange);
-        window.addEventListener('orientationchange', handleViewportChange);
-        handleViewportChange();
+        const state = new EmulatorState();
         
-        // Prevent default touch behaviors
-        document.addEventListener('touchstart', function(e) {
-            if (e.target.closest('#touch-controls') || e.target.closest('#screen-wrapper')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-        
-        document.addEventListener('touchmove', function(e) {
-            if (e.target.closest('#touch-controls') || e.target.closest('#screen-wrapper')) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-        
-        // Audio Enable Function
-        function enableAudioAndStart() {
-            if (!gba || !gameLoaded) {
-                console.log('Game not ready yet');
-                return;
+        // ========================================
+        // UI CONTROLLER
+        // ========================================
+        class UIController {
+            constructor() {
+                this.elements = {
+                    loading: document.getElementById('loading'),
+                    error: document.getElementById('error'),
+                    audioEnable: document.getElementById('audio-enable'),
+                    screen: document.getElementById('screen')
+                };
             }
             
-            // Hide the enable button immediately
-            document.getElementById('audio-enable').style.display = 'none';
+            showError(message) {
+                this.elements.error.style.display = 'block';
+                this.elements.error.textContent = `Error: ${message}`;
+                this.elements.loading.style.display = 'none';
+                console.error('Error:', message);
+            }
             
-            // Function to start the game
-            function startGame() {
-                try {
-                    // Start the game
-                    for (let i = 0; i < runCommands.length; ++i) {
-                        runCommands[i]();
+            hideLoading() {
+                this.elements.loading.style.display = 'none';
+            }
+            
+            updateLoadingText(text) {
+                this.elements.loading.textContent = text;
+            }
+            
+            showAudioButton() {
+                this.elements.audioEnable.style.display = 'block';
+            }
+            
+            hideAudioButton() {
+                this.elements.audioEnable.style.display = 'none';
+            }
+        }
+        
+        const ui = new UIController();
+        
+        // ========================================
+        // VIEWPORT HANDLER
+        // ========================================
+        class ViewportHandler {
+            constructor() {
+                this.init();
+            }
+            
+            init() {
+                window.addEventListener('resize', () => this.update());
+                window.addEventListener('orientationchange', () => this.update());
+                this.update();
+            }
+            
+            update() {
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+            }
+        }
+        
+        // ========================================
+        // TOUCH PREVENTION
+        // ========================================
+        class TouchPrevention {
+            constructor() {
+                this.init();
+            }
+            
+            init() {
+                const preventDefaultForAreas = ['#touch-controls', '#screen-wrapper'];
+                
+                document.addEventListener('touchstart', (e) => {
+                    if (preventDefaultForAreas.some(area => e.target.closest(area))) {
+                        e.preventDefault();
                     }
-                    runCommands = [];
-                    gba.runStable();
-                    console.log('Game started!');
-                    audioEnabled = true;
-                } catch (e) {
-                    console.error('Failed to start game:', e);
-                    showError('Failed to start game: ' + e.message);
+                }, { passive: false });
+                
+                document.addEventListener('touchmove', (e) => {
+                    if (preventDefaultForAreas.some(area => e.target.closest(area))) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+                
+                document.addEventListener('gesturestart', (e) => {
+                    e.preventDefault();
+                });
+            }
+        }
+        
+        // ========================================
+        // INPUT CONTROLLER
+        // ========================================
+        class InputController {
+            constructor() {
+                this.setupControls();
+            }
+            
+            createKeyboardEvent(type, key) {
+                const keyCode = KEY_MAP[key];
+                const event = new KeyboardEvent(type, {
+                    key: key,
+                    keyCode: keyCode,
+                    which: keyCode,
+                    bubbles: true,
+                    cancelable: true
+                });
+                
+                // Override for browser compatibility
+                Object.defineProperty(event, 'keyCode', {
+                    get: () => keyCode
+                });
+                Object.defineProperty(event, 'which', {
+                    get: () => keyCode
+                });
+                
+                return event;
+            }
+            
+            handleTouchStart(e, key) {
+                e.preventDefault();
+                this.tryEnableAudio();
+                document.dispatchEvent(this.createKeyboardEvent('keydown', key));
+            }
+            
+            handleTouchEnd(e, key) {
+                e.preventDefault();
+                document.dispatchEvent(this.createKeyboardEvent('keyup', key));
+            }
+            
+            tryEnableAudio() {
+                if (!state.audioEnabled && state.gba?.audio) {
+                    audioManager.tryEnableAudio();
                 }
             }
             
-            // Try to initialize audio, but start game regardless
-            if (gba.audio) {
+            setupControls() {
+                const controls = document.querySelectorAll('[data-key]');
+                
+                controls.forEach(control => {
+                    const key = control.getAttribute('data-key');
+                    
+                    // Touch events
+                    control.addEventListener('touchstart', (e) => this.handleTouchStart(e, key));
+                    control.addEventListener('touchend', (e) => this.handleTouchEnd(e, key));
+                    control.addEventListener('touchcancel', (e) => this.handleTouchEnd(e, key));
+                    
+                    // Mouse events for testing
+                    control.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        document.dispatchEvent(this.createKeyboardEvent('keydown', key));
+                    });
+                    
+                    control.addEventListener('mouseup', (e) => {
+                        e.preventDefault();
+                        document.dispatchEvent(this.createKeyboardEvent('keyup', key));
+                    });
+                    
+                    control.addEventListener('mouseleave', () => {
+                        document.dispatchEvent(this.createKeyboardEvent('keyup', key));
+                    });
+                });
+            }
+        }
+        
+        // ========================================
+        // AUDIO MANAGER
+        // ========================================
+        class AudioManager {
+            tryEnableAudio() {
                 try {
-                    // Create new audio context if needed
-                    if (!gba.audio.context || gba.audio.context.state === 'closed') {
+                    if (!state.gba.audio.context || state.gba.audio.context.state === 'closed') {
                         const AudioContext = window.AudioContext || window.webkitAudioContext;
-                        gba.audio.context = new AudioContext();
+                        state.gba.audio.context = new AudioContext();
+                    }
+                    
+                    if (state.gba.audio.context.state === 'suspended') {
+                        state.gba.audio.context.resume();
+                    }
+                    
+                    state.audioEnabled = true;
+                } catch (e) {
+                    console.log('Audio enable failed:', e);
+                }
+            }
+            
+            enableAudioAndStart() {
+                if (!state.gba || !state.gameLoaded) {
+                    console.log('Game not ready yet');
+                    return;
+                }
+                
+                ui.hideAudioButton();
+                
+                if (state.gba.audio) {
+                    this.initializeAudio();
+                }
+                
+                this.startGame();
+            }
+            
+            initializeAudio() {
+                try {
+                    if (!state.gba.audio.context || state.gba.audio.context.state === 'closed') {
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        state.gba.audio.context = new AudioContext();
                         console.log('Created new audio context');
                     }
                     
-                    // Set master volume
-                    gba.audio.masterVolume = 0.8;
+                    state.gba.audio.masterVolume = CONFIG.AUDIO_VOLUME;
                     
-                    // Check audio context state
-                    if (gba.audio.context.state === 'suspended') {
-                        // Try to resume, but don't wait
-                        gba.audio.context.resume().then(() => {
-                            console.log('Audio context resumed successfully');
-                        }).catch(err => {
-                            console.log('Audio resume failed:', err);
-                        });
+                    if (state.gba.audio.context.state === 'suspended') {
+                        state.gba.audio.context.resume()
+                            .then(() => console.log('Audio context resumed'))
+                            .catch(err => console.log('Audio resume failed:', err));
                     }
                 } catch (e) {
                     console.log('Audio initialization error:', e);
                 }
             }
             
-            // Start the game immediately regardless of audio
-            startGame();
-        }
-        
-        // Touch control handlers
-        function setupTouchControls() {
-            const controls = document.querySelectorAll('[data-key]');
-            
-            controls.forEach(control => {
-                const key = control.getAttribute('data-key');
-                
-                // Helper function to create proper keyboard event
-                function createKeyboardEvent(type, key) {
-                    const keyCode = {
-                        'ArrowUp': 38,
-                        'ArrowDown': 40,
-                        'ArrowLeft': 37,
-                        'ArrowRight': 39,
-                        'z': 90,
-                        'x': 88,
-                        'Enter': 13,
-                        'Shift': 16,
-                        'q': 81,
-                        'w': 87
-                    }[key];
-                    
-                    const event = new KeyboardEvent(type, {
-                        key: key,
-                        keyCode: keyCode,
-                        which: keyCode,
-                        bubbles: true,
-                        cancelable: true
-                    });
-                    
-                    // Override keyCode for browsers that don't support it in constructor
-                    Object.defineProperty(event, 'keyCode', {
-                        get: function() { return keyCode; }
-                    });
-                    Object.defineProperty(event, 'which', {
-                        get: function() { return keyCode; }
-                    });
-                    
-                    return event;
+            startGame() {
+                try {
+                    state.runCommands.forEach(cmd => cmd());
+                    state.runCommands = [];
+                    state.gba.runStable();
+                    console.log('Game started!');
+                    state.audioEnabled = true;
+                } catch (e) {
+                    console.error('Failed to start game:', e);
+                    ui.showError(`Failed to start game: ${e.message}`);
                 }
-                
-                // Touch start
-                control.addEventListener('touchstart', function(e) {
-                    e.preventDefault();
-                    
-                    // Enable audio on first touch if not already enabled
-                    if (!audioEnabled && gba && gba.audio) {
-                        try {
-                            if (!gba.audio.context || gba.audio.context.state === 'closed') {
-                                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                                gba.audio.context = new AudioContext();
-                            }
-                            if (gba.audio.context.state === 'suspended') {
-                                gba.audio.context.resume();
-                            }
-                            audioEnabled = true;
-                        } catch (e) {
-                            console.log('Touch audio enable failed:', e);
-                        }
-                    }
-                    
-                    const event = createKeyboardEvent('keydown', key);
-                    document.dispatchEvent(event);
-                });
-                
-                // Touch end
-                control.addEventListener('touchend', function(e) {
-                    e.preventDefault();
-                    const event = createKeyboardEvent('keyup', key);
-                    document.dispatchEvent(event);
-                });
-                
-                // Touch cancel
-                control.addEventListener('touchcancel', function(e) {
-                    e.preventDefault();
-                    const event = createKeyboardEvent('keyup', key);
-                    document.dispatchEvent(event);
-                });
-                
-                // Mouse support for testing
-                control.addEventListener('mousedown', function(e) {
-                    e.preventDefault();
-                    const event = createKeyboardEvent('keydown', key);
-                    document.dispatchEvent(event);
-                });
-                
-                control.addEventListener('mouseup', function(e) {
-                    e.preventDefault();
-                    const event = createKeyboardEvent('keyup', key);
-                    document.dispatchEvent(event);
-                });
-                
-                control.addEventListener('mouseleave', function(e) {
-                    const event = createKeyboardEvent('keyup', key);
-                    document.dispatchEvent(event);
-                });
-            });
-        }
-        
-        // Show error message
-        function showError(message) {
-            document.getElementById('error').style.display = 'block';
-            document.getElementById('error').textContent = 'Error: ' + message;
-            document.getElementById('loading').style.display = 'none';
-            console.error('Error:', message);
-        }
-        
-        // Hide loading message
-        function hideLoading() {
-            document.getElementById('loading').style.display = 'none';
-        }
-        
-        // Load file via XMLHttpRequest
-        function loadFile(path, callback) {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', path, true);
-            xhr.responseType = 'arraybuffer';
-            
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    callback(null, xhr.response);
-                } else {
-                    callback(new Error(`Failed to load ${path}: ${xhr.status}`));
-                }
-            };
-            
-            xhr.onerror = function() {
-                callback(new Error(`Network error loading ${path}`));
-            };
-            
-            xhr.send();
-        }
-        
-        // Initialize and auto-load everything
-        function autoLoad() {
-            try {
-                // Initialize emulator
-                gba = new GameBoyAdvance();
-                gba.keypad.eatInput = true;
-                gba.setCanvas(document.getElementById('screen'));
-                
-                // Set up error logging
-                gba.setLogger(function(level, message) {
-                    console.log('[GBA]', level + ':', message);
-                    if (level === gba.LOG_ERROR) {
-                        showError(message);
-                    }
-                });
-                
-                // Configure audio (but don't create context yet on mobile)
-                if (gba.audio) {
-                    gba.audio.masterVolume = 0.8;
-                    // Don't create audio context here - wait for user interaction
-                }
-                
-                // Load BIOS
-                document.getElementById('loading').textContent = 'Loading BIOS...';
-                loadFile(BIOS_PATH, function(error, biosData) {
-                    if (error) {
-                        showError(`Failed to load BIOS: ${error.message}`);
-                        return;
-                    }
-                    
-                    try {
-                        gba.setBios(biosData);
-                        console.log('BIOS loaded successfully');
-                        
-                        // Load Game ROM
-                        document.getElementById('loading').textContent = 'Loading game...';
-                        loadFile(GAME_PATH, function(error, gameData) {
-                            if (error) {
-                                showError(`Failed to load game: ${error.message}`);
-                                return;
-                            }
-                            
-                            try {
-                                gba.setRom(gameData);
-                                console.log('Game loaded successfully');
-                                
-                                // Hide loading message
-                                hideLoading();
-                                
-                                // Mark game as loaded
-                                gameLoaded = true;
-                                
-                                // Add run command
-                                runCommands.push(function() {
-                                    gba.paused = false;
-                                    if (SKIP_BOOT) {
-                                        gba.reset();
-                                    }
-                                });
-                                
-                                // Show the audio enable button
-                                document.getElementById('audio-enable').style.display = 'block';
-                                
-                                // On desktop, auto-start might work
-                                if (!('ontouchstart' in window) && AUTO_START) {
-                                    setTimeout(enableAudioAndStart, 100);
-                                }
-                                
-                            } catch (e) {
-                                showError(`Failed to set ROM: ${e.message}`);
-                            }
-                        });
-                    } catch (e) {
-                        showError(`Failed to set BIOS: ${e.message}`);
-                    }
-                });
-                
-            } catch (e) {
-                showError(`Failed to initialize: ${e.message}`);
             }
         }
         
-        // Start loading when page is ready
-        window.addEventListener('load', function() {
-            // Set up touch controls
-            setupTouchControls();
+        const audioManager = new AudioManager();
+        
+        // ========================================
+        // FILE LOADER
+        // ========================================
+        class FileLoader {
+            static load(path) {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', path, true);
+                    xhr.responseType = 'arraybuffer';
+                    
+                    xhr.onload = () => {
+                        if (xhr.status === 200) {
+                            resolve(xhr.response);
+                        } else {
+                            reject(new Error(`Failed to load ${path}: ${xhr.status}`));
+                        }
+                    };
+                    
+                    xhr.onerror = () => {
+                        reject(new Error(`Network error loading ${path}`));
+                    };
+                    
+                    xhr.send();
+                });
+            }
+        }
+        
+        // ========================================
+        // EMULATOR MANAGER
+        // ========================================
+        class EmulatorManager {
+            async initialize() {
+                try {
+                    this.createEmulator();
+                    await this.loadBios();
+                    await this.loadGame();
+                    this.onReady();
+                } catch (error) {
+                    ui.showError(error.message);
+                }
+            }
             
-            // Set up audio enable button with both click and touch support
-            const audioBtn = document.getElementById('audio-enable');
-            audioBtn.addEventListener('click', enableAudioAndStart);
-            audioBtn.addEventListener('touchend', function(e) {
-                e.preventDefault();
-                enableAudioAndStart();
-            });
+            createEmulator() {
+                state.gba = new GameBoyAdvance();
+                state.gba.keypad.eatInput = true;
+                state.gba.setCanvas(ui.elements.screen);
+                
+                state.gba.setLogger((level, message) => {
+                    console.log('[GBA]', level + ':', message);
+                    if (level === state.gba.LOG_ERROR) {
+                        ui.showError(message);
+                    }
+                });
+                
+                if (state.gba.audio) {
+                    state.gba.audio.masterVolume = CONFIG.AUDIO_VOLUME;
+                }
+            }
             
-            // Prevent zoom on iOS
-            document.addEventListener('gesturestart', function(e) {
-                e.preventDefault();
-            });
+            async loadBios() {
+                ui.updateLoadingText('Loading BIOS...');
+                const biosData = await FileLoader.load(CONFIG.BIOS_PATH);
+                state.gba.setBios(biosData);
+                console.log('BIOS loaded successfully');
+            }
             
-            // Small delay to ensure all scripts are loaded
-            setTimeout(autoLoad, 100);
-        });
+            async loadGame() {
+                ui.updateLoadingText('Loading game...');
+                const gameData = await FileLoader.load(CONFIG.GAME_PATH);
+                state.gba.setRom(gameData);
+                console.log('Game loaded successfully');
+            }
+            
+            onReady() {
+                ui.hideLoading();
+                state.gameLoaded = true;
+                
+                state.runCommands.push(() => {
+                    state.gba.paused = false;
+                    if (CONFIG.SKIP_BOOT) {
+                        state.gba.reset();
+                    }
+                });
+                
+                ui.showAudioButton();
+                
+                // Auto-start on desktop if configured
+                if (!('ontouchstart' in window) && CONFIG.AUTO_START) {
+                    setTimeout(() => audioManager.enableAudioAndStart(), 100);
+                }
+            }
+        }
+        
+        // ========================================
+        // APPLICATION INITIALIZATION
+        // ========================================
+        class App {
+            constructor() {
+                window.addEventListener('load', () => this.init());
+            }
+            
+            init() {
+                // Initialize components
+                new ViewportHandler();
+                new TouchPrevention();
+                new InputController();
+                
+                // Setup audio button
+                this.setupAudioButton();
+                
+                // Start emulator after delay
+                setTimeout(() => {
+                    const emulator = new EmulatorManager();
+                    emulator.initialize();
+                }, 100);
+            }
+            
+            setupAudioButton() {
+                const audioBtn = document.getElementById('audio-enable');
+                
+                audioBtn.addEventListener('click', () => audioManager.enableAudioAndStart());
+                audioBtn.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    audioManager.enableAudioAndStart();
+                });
+            }
+        }
+        
+        // Start the application
+        new App();
     </script>
 </body>
 </html>
