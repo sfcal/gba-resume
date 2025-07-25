@@ -405,7 +405,7 @@ namespace
             
             // Set up normal background and transition to intro
             setup_background();
-            bn::music_items::cyberrid.play(0.15, true);
+            bn::music_items::menutoun.play(0.15, true);
             _current_state = page_state::INTRO;
             show_intro_page();
         }
