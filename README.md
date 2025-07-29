@@ -1,7 +1,7 @@
 # GBA Resume
 
 <p align="center">
-  <img src="assets/Gba-cartridge.png" alt="GBA Cartridge" width="300">
+  <img src="assets/GBA-Mockup-Illustrated-Color.png" alt="GBA Cartridge" width="300">
 </p>
 
 An interactive resume built as a Game Boy Advance homebrew application using the Butano engine. Navigate through different sections to explore experience, projects, skills, and education in a retro gaming format.
