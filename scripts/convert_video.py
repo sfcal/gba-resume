@@ -141,7 +141,7 @@ def extract_audio():
         '-i', INPUT_VIDEO,
         '-t', str(DURATION),  # Extract only the duration we need
         '-vn',  # No video
-        '-af', 'volume=3',  # VOLUME BOOST: 3.0 = 300% (triple the volume)
+        '-af', 'volume=15',  # VOLUME BOOST: 1000%
         '-acodec', 'pcm_s16le',  # 16-bit PCM
         '-ar', str(AUDIO_SAMPLE_RATE),  # Sample rate
         '-ac', str(AUDIO_CHANNELS),  # Number of channels

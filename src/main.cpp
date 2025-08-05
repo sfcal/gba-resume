@@ -499,8 +499,8 @@ namespace
             _small_text_generator.generate(0, -30, "professional", _small_text_sprites);
             
             _small_text_generator.generate(0, -10, "contact:", _small_text_sprites);
-            _small_text_generator.generate(0, 0, "(302) 513-3155", _small_text_sprites);
-            _small_text_generator.generate(0, 10, "hello@samuelcalvert.com", _small_text_sprites);
+            //_small_text_generator.generate(0, 10, "(302) 513-3155", _small_text_sprites);
+            _small_text_generator.generate(0, 0, "hello@samuelcalvert.com", _small_text_sprites);
             
             // Use large font for action prompt
             _text_generator.generate(0, 50, "Press START", _text_sprites);
@@ -606,6 +606,10 @@ namespace
                 _text_generator.generate(-100, y_pos, "  UD Machine Learn", _text_sprites);
             }
             _small_text_generator.generate(-90, y_pos + 15, "research intern", _small_text_sprites);
+            
+            // Tool Tip 
+            _small_text_generator.generate(-40, 70, "Press A to view", _small_text_sprites);
+
         }
 
         void show_projects_page()
@@ -750,8 +754,8 @@ namespace
                 return;
             }
 
-            // Navigation between pages
-            if (bn::keypad::left_pressed())
+            // Navigation between pages (left/L button for previous, right/R button for next)
+            if (bn::keypad::left_pressed() || bn::keypad::l_pressed())
             {
                 bn::sound_items::alert.play();
                 int page_index = static_cast<int>(_current_carousel_page);
@@ -760,7 +764,7 @@ namespace
                 _highlight_index = 0;
                 show_carousel_page();
             }
-            else if (bn::keypad::right_pressed())
+            else if (bn::keypad::right_pressed() || bn::keypad::r_pressed())
             {
                 bn::sound_items::alert.play();
                 int page_index = static_cast<int>(_current_carousel_page);
@@ -786,7 +790,7 @@ namespace
                     show_carousel_page();
                 }
                 
-                if (bn::keypad::a_pressed())
+                if (bn::keypad::a_pressed() || bn::keypad::start_pressed())
                 {
                     bn::sound_items::alert.play();
                     clear_navigation_arrows();
