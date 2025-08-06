@@ -40,9 +40,7 @@ Flash `web/resume.gba` to a GBA flashcart
 Open `web/resume.gba` in your favorite GBA emulator (mGBA, VBA-M, etc.)
 
 ### In Browser
-1. Copy a GBA BIOS file to `web/bios.bin`
-2. Open `web/index.html` in a modern web browser
-3. The game will auto-start with touch/mouse controls
+Go to [gba.samuel.computer](https://gba.samuel.computer)!
 
 
 ## 🙏 Acknowledgments
