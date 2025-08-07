@@ -499,7 +499,7 @@ namespace
             _small_text_generator.generate(0, -30, "professional", _small_text_sprites);
             
             _small_text_generator.generate(0, -10, "contact:", _small_text_sprites);
-            //_small_text_generator.generate(0, 10, "(302) 513-3155", _small_text_sprites);
+            //_small_text_generator.generate(0, 10, "(xxx) xxx-xxxx", _small_text_sprites);
             _small_text_generator.generate(0, 0, "hello@samuelcalvert.com", _small_text_sprites);
             
             // Use large font for action prompt
@@ -683,11 +683,11 @@ namespace
                     _small_text_generator.set_left_alignment();
                     _small_text_generator.generate(-110, -30, "- deploy & troubleshoot solutions", _small_text_sprites);
                     _small_text_generator.generate(-110, -20, "- build custom packer images", _small_text_sprites);
-                    _small_text_generator.generate(-110, -10, "- Manage 500+ endpoints globally", _small_text_sprites);
-                    _small_text_generator.generate(-110, 0, "- optimize stream performance", _small_text_sprites);
+                    _small_text_generator.generate(-110, -10, "- Manage 500+ endpoints enterprise network", _small_text_sprites);
+                    _small_text_generator.generate(-110, 0, "- optimize SRT stream performance", _small_text_sprites);
                     _small_text_generator.generate(-110, 10, "- handle 50Gbps peak traffic", _small_text_sprites);
-                    _small_text_generator.generate(-110, 20, "- AWS cloud deployments", _small_text_sprites);
-                    _small_text_generator.generate(-110, 30, "- python automation scripts", _small_text_sprites);
+                    _small_text_generator.generate(-110, 20, "- live video cloud deployments", _small_text_sprites);
+                    _small_text_generator.generate(-110, 30, "- Technical transitions from RTSP", _small_text_sprites);
                     break;
                     
                 case experience_section::LAB_STAFF:
@@ -714,7 +714,7 @@ namespace
                     _small_text_generator.generate(-110, -10, "- GNS3 virtual network labs", _small_text_sprites);
                     _small_text_generator.generate(-110, 0, "- docker containerization", _small_text_sprites);
                     _small_text_generator.generate(-110, 10, "- research documentation", _small_text_sprites);
-                    _small_text_generator.generate(-110, 20, "- tensorflow implementation", _small_text_sprites);
+                    _small_text_generator.generate(-110, 20, "- pytorch implementation", _small_text_sprites);
                     _small_text_generator.generate(-110, 30, "- data pipeline development", _small_text_sprites);
                     break;
                     
